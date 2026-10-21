@@ -1,0 +1,12 @@
+Esto NO se edita a mano: es la app compilada para navegador.
+
+Se regenera desde el proyecto de la app, que está en otra carpeta:
+
+    cd ~/Documents/Planazo/app
+    npx expo export --platform web --output-dir /tmp/webapp
+    rm -rf ~/Documents/Planazo-web/app
+    cp -r /tmp/webapp ~/Documents/Planazo-web/app
+    cd ~/Documents/Planazo-web && git add -A && git commit -m "App web al día" && git push
+
+Hace falta que `expo.experiments.baseUrl` siga siendo "/app" en app.json,
+o las rutas saldrán mal y la página se quedará en blanco.
