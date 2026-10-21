@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Te invitan a un planazo</title>
+<meta name="description" content="Alguien te ha invitado a un plan. Mira de qué va antes de instalar nada.">
+<meta property="og:title" content="Te invitan a un planazo">
+<meta property="og:description" content="Mira de qué va el plan antes de instalar nada.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0D7F76">
+<link rel="icon" href="/favicon.png">
+<style>
+  :root{
+    --tinta:#1B1B2F; --papel:#FBFBFD; --tarjeta:#FFFFFF;
+    --verde:#0D7F76; --verdeSuave:#E6F8F6; --verdeBorde:#A5E4DE;
+    --lila:#5B34C7; --lilaSuave:#F3EEFE; --lilaBorde:#DDD2FB;
+    --ambar:#855A06; --ambarSuave:#FEF6E4; --ambarBorde:#F6DFA6;
+    --gris:rgba(27,27,47,.60); --linea:rgba(27,27,47,.13);
+    --rojo:#C02D4E;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    background:var(--papel); color:var(--tinta);
+    min-height:100dvh; display:flex; align-items:center; justify-content:center;
+    padding:24px 16px calc(24px + env(safe-area-inset-bottom));
+  }
+  .hoja{width:100%; max-width:420px}
+  .marca{display:flex; align-items:center; gap:10px; justify-content:center; margin-bottom:22px}
+  .marca img{width:34px;height:34px}
+  .marca b{font-size:19px; letter-spacing:-.3px}
+  .tarjeta{
+    background:var(--tarjeta); border:1px solid var(--linea); border-radius:16px;
+    padding:22px; box-shadow:0 1px 2px rgba(27,27,47,.04), 0 8px 24px rgba(27,27,47,.05);
+  }
+  .quien{display:flex; align-items:center; gap:11px; margin-bottom:16px}
+  .foto{
+    width:42px;height:42px;border-radius:12px;object-fit:cover;flex:none;
+    background:var(--verdeSuave); display:grid; place-items:center;
+    font-weight:700; color:var(--verde); font-size:15px;
+  }
+  .quien small{display:block; color:var(--gris); font-size:13px}
+  .quien strong{font-size:15px}
+  h1{font-size:25px; line-height:1.22; letter-spacing:-.4px; margin-bottom:10px; text-wrap:balance}
+  .cuando{color:var(--gris); font-size:14px; margin-bottom:16px}
+  .cuando b{color:var(--tinta); font-weight:600}
+  .etiquetas{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:18px}
+  .et{font-size:12.5px; padding:4px 10px; border-radius:999px; border:1px solid var(--linea); color:var(--gris)}
+  .et.lila{background:var(--lilaSuave); border-color:var(--lilaBorde); color:var(--lila)}
+  .et.verde{background:var(--verdeSuave); border-color:var(--verdeBorde); color:var(--verde)}
+  .et.ambar{background:var(--ambarSuave); border-color:var(--ambarBorde); color:var(--ambar)}
+  .boton{
+    display:block; width:100%; text-align:center; text-decoration:none;
+    background:var(--verde); color:#fff; font-weight:600; font-size:16px;
+    padding:14px; border-radius:12px; border:0; cursor:pointer;
+  }
+  .boton:active{opacity:.9}
+  .codigo{
+    margin-top:14px; padding-top:14px; border-top:1px solid var(--linea);
+    font-size:13.5px; color:var(--gris); text-align:center;
+  }
+  .codigo code{
+    display:inline-block; margin-top:6px; font-size:17px; letter-spacing:2.5px;
+    color:var(--tinta); background:var(--papel); border:1px solid var(--linea);
+    border-radius:8px; padding:7px 12px; user-select:all;
+  }
+  .nota{margin-top:18px; font-size:12.5px; color:var(--gris); text-align:center; line-height:1.55}
+  .cargando,.problema{text-align:center; padding:12px 0}
+  .problema h1{font-size:20px; margin-bottom:8px}
+  .problema p{color:var(--gris); font-size:14.5px}
+  .esqueleto{height:13px;border-radius:6px;background:rgba(27,27,47,.07);margin:9px 0}
+  @media (prefers-color-scheme: dark){
+    :root{
+      --tinta:#F2F2F7; --papel:#131320; --tarjeta:#1C1C2B;
+      --verde:#21C3B6; --verdeSuave:rgba(33,195,182,.13); --verdeBorde:rgba(33,195,182,.32);
+      --lila:#B49BFB; --lilaSuave:rgba(139,92,246,.15); --lilaBorde:rgba(139,92,246,.35);
+      --ambar:#F7B928; --ambarSuave:rgba(247,185,40,.13); --ambarBorde:rgba(247,185,40,.32);
+      --gris:rgba(242,242,247,.60); --linea:rgba(242,242,247,.14);
+    }
+    .boton{color:#08201E}
+  }
+</style>
+</head>
+<body>
+<main class="hoja">
+  <div class="marca"><img src="/icono.png" alt=""><b>Planazo</b></div>
+  <div class="tarjeta" id="tarjeta">
+    <div class="cargando">
+      <div class="esqueleto" style="width:55%"></div>
+      <div class="esqueleto" style="width:85%"></div>
+      <div class="esqueleto" style="width:40%"></div>
+    </div>
+  </div>
+  <p class="nota" id="nota"></p>
+</main>
+
+<script>
+// La conexión es la publishable: va dentro de la app y de esta página a
+// propósito. Quien protege los datos es Row Level Security, no esconderla.
+const URL_SUPA = 'https://jtzltivdeoktkfvituvm.supabase.co';
+const CLAVE = 'sb_publishable__DaBd5IdtPi2Z2x7e-p3Ng_ONeBEVqb';
+const APK = 'https://expo.dev/artifacts/eas/HM_Xlm-XSVkQfk4sPUIdjE2BiPtgXcJgxZvYr3JRh6U.apk';
+
+/**
+ * El código puede llegar de tres formas, porque no todos los alojamientos
+ * estáticos sirven rutas inventadas: /i/CODIGO, /i/#CODIGO o /i/?c=CODIGO.
+ * Las tres se aceptan para que el enlace funcione se aloje donde se aloje.
+ */
+function codigoDeLaUrl() {
+  const u = new window.URL(location.href);
+  const porConsulta = u.searchParams.get('c');
+  if (porConsulta) return porConsulta.trim();
+  if (u.hash.length > 1) return decodeURIComponent(u.hash.slice(1)).trim();
+  const partes = u.pathname.split('/').filter(Boolean);
+  const ultima = partes[partes.length - 1] || '';
+  return (ultima === 'i' || ultima.includes('.')) ? '' : decodeURIComponent(ultima).trim();
+}
+
+const escapar = (t) => String(t ?? '').replace(/[&<>"']/g, (c) =>
+  ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio',
+               'agosto','septiembre','octubre','noviembre','diciembre'];
+const DIAS = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+
+function cuando(iso) {
+  const f = new Date(iso);
+  if (isNaN(f)) return '';
+  const hoy = new Date();
+  const dias = Math.round((f - hoy) / 86400000);
+  const hora = f.getHours().toString().padStart(2,'0') + ':' + f.getMinutes().toString().padStart(2,'0');
+  let dia = `${DIAS[f.getDay()]} ${f.getDate()} de ${MESES[f.getMonth()]}`;
+  if (dias === 0) dia = 'hoy';
+  else if (dias === 1) dia = 'mañana';
+  return `<b>${escapar(dia)}</b> a las <b>${hora}</b>`;
+}
+
+function iniciales(nombre) {
+  return String(nombre || '?').trim().split(/\s+/).slice(0,2)
+    .map(p => p[0]).join('').toUpperCase();
+}
+
+function pinta(html, nota) {
+  document.getElementById('tarjeta').innerHTML = html;
+  document.getElementById('nota').innerHTML = nota || '';
+}
+
+function problema(titulo, texto) {
+  pinta(`<div class="problema"><h1>${escapar(titulo)}</h1><p>${escapar(texto)}</p></div>`,
+        'Planazo · la identidad pública es el grupo, no la persona');
+}
+
+async function principal() {
+  const codigo = codigoDeLaUrl();
+  if (!codigo) {
+    problema('Falta el código', 'Este enlace está incompleto. Pide que te lo manden otra vez.');
+    return;
+  }
+
+  let d;
+  try {
+    const r = await fetch(`${URL_SUPA}/rest/v1/rpc/vista_previa_invitacion`, {
+      method: 'POST',
+      headers: { apikey: CLAVE, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_token: codigo }),
+    });
+    if (!r.ok) throw new Error('respuesta ' + r.status);
+    const filas = await r.json();
+    d = Array.isArray(filas) ? filas[0] : filas;
+  } catch (e) {
+    problema('No se pudo comprobar', 'Vuelve a intentarlo en un momento.');
+    return;
+  }
+
+  if (!d || d.estado === 'no_valida') {
+    problema('Este enlace ya no vale', 'Puede que lo hayan revocado. Pide uno nuevo a quien te invitó.');
+    return;
+  }
+  if (d.estado === 'caducada') {
+    problema('El enlace ha caducado', 'Los enlaces duran unos días a propósito. Pide uno nuevo.');
+    return;
+  }
+  if (d.estado === 'agotada') {
+    problema('Ya lo han usado todas las veces', 'Cada enlace tiene un límite de usos. Pide uno nuevo.');
+    return;
+  }
+
+  const esPlan = d.destino === 'plan';
+  const etiquetas = [];
+  if (esPlan) {
+    etiquetas.push(d.modo === 'entre_grupos'
+      ? '<span class="et lila">Entre grupos</span>'
+      : '<span class="et verde">Plazas abiertas</span>');
+  }
+  if (d.categoria) etiquetas.push(`<span class="et">${escapar(d.categoria)}</span>`);
+  if (d.zona) etiquetas.push(`<span class="et">${escapar(d.zona)}</span>`);
+  if (esPlan && d.quedan !== null && d.quedan !== undefined) {
+    etiquetas.push(d.quedan > 0
+      ? `<span class="et ambar">Quedan ${d.quedan} plazas</span>`
+      : '<span class="et ambar">Está completo</span>');
+  }
+
+  const foto = d.grupo_foto
+    ? `<img class="foto" src="${escapar(d.grupo_foto)}" alt="">`
+    : `<div class="foto">${escapar(iniciales(d.grupo))}</div>`;
+
+  const gente = esPlan
+    ? (d.van === 1 ? 'Va 1 persona' : `Van ${d.van} personas`)
+    : (d.miembros === 1 ? '1 miembro' : `${d.miembros} miembros`);
+
+  pinta(`
+    <div class="quien">
+      ${foto}
+      <div>
+        <strong>${escapar(d.grupo)}</strong>
+        <small>${esPlan ? 'te invita a un plan' : 'te invita a su grupo'} · ${escapar(gente)}</small>
+      </div>
+    </div>
+    <h1>${escapar(d.titulo)}</h1>
+    ${esPlan && d.inicio ? `<p class="cuando">${cuando(d.inicio)}</p>` : ''}
+    <div class="etiquetas">${etiquetas.join('')}</div>
+    <a class="boton" href="${APK}">Instalar Planazo</a>
+    <div class="codigo">
+      Si ya la tienes, abre la app, ve a la pestaña «Grupo» y pega este código en «Tengo una invitación»:
+      <br><code>${escapar(codigo)}</code>
+    </div>
+  `, esPlan
+      ? 'El sitio exacto y quién va se ven al entrar. Es a propósito: un plan público con la hora y el punto de encuentro es justo lo que Planazo evita.'
+      : 'Al entrar verás quién está dentro y lo que publica el grupo.');
+}
+
+principal();
+</script>
+</body>
+</html>
