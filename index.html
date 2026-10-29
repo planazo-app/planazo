@@ -52,6 +52,12 @@
 
   /* ══ Arriba, sobre verde hondo ═════════════════════════════════════════ */
   .alto{
+    /* Las etiquetas que flotan alrededor del móvil van colocadas con valores
+       negativos para que asomen por fuera de la columna. A anchos intermedios
+       —entre que cabe la columna entera y que entra el diseño de móvil— una de
+       ellas se salía por la derecha y aparecía una barra horizontal en toda la
+       página. Esto la recorta sin tocar su colocación. */
+    overflow-x:clip;
     background:
       radial-gradient(1100px 520px at 78% -8%, rgba(45,212,191,.26), transparent 62%),
       radial-gradient(800px 420px at 8% 108%, rgba(163,24,92,.22), transparent 60%),
@@ -78,6 +84,25 @@
   }
   .boton.fantasma{background:rgba(255,255,255,.10); color:#fff; box-shadow:none; border:1px solid rgba(255,255,255,.26)}
   .nota{margin-top:13px; font-size:13px; color:rgba(255,255,255,.55)}
+
+  /* Los botones de tienda. Negros con borde claro, que es como se ven en
+     todas partes: no hace falta inventarse nada, y reconocerlos de un vistazo
+     vale más que ser original aquí. */
+  .tiendas{display:flex; flex-wrap:wrap; gap:11px; margin-top:28px}
+  .tienda{
+    display:inline-flex; align-items:center; gap:11px; text-decoration:none;
+    background:#000; color:#fff; border:1px solid rgba(255,255,255,.3);
+    border-radius:13px; padding:10px 18px 10px 15px; position:relative;
+  }
+  .tienda svg{width:25px; height:25px; flex:none}
+  .tienda span{display:flex; flex-direction:column; line-height:1.15; font-weight:600; font-size:17px; letter-spacing:-.2px}
+  .tienda small{font-size:10.5px; font-weight:400; opacity:.78; letter-spacing:.2px}
+  .tienda[data-pronto]::after{
+    content:attr(data-pronto); position:absolute; top:-9px; right:-7px;
+    background:var(--verdeClaro); color:#06302C; font-size:9.5px; font-weight:800;
+    letter-spacing:.3px; border-radius:999px; padding:3px 8px;
+  }
+  .tienda.oscura{border-color:rgba(255,255,255,.26)}
 
   /* El móvil de la portada, con etiquetas flotando alrededor. */
   .escena{position:relative; display:flex; justify-content:center}
@@ -150,6 +175,26 @@
 
   .desplegable{display:flex; align-items:center; gap:8px; padding:3px 2px}
   .desplegable .texto{flex:1; color:var(--tinta); font-size:12px; font-weight:700}
+  .rotuloApp{font-size:8.5px; font-weight:700; letter-spacing:.9px; color:var(--flojo)}
+  .reparto{display:flex; align-items:center; gap:7px; font-size:11.5px}
+  .reparto b{color:var(--tinta); font-weight:600}
+  .reparto i{font-style:normal; color:var(--gris); font-size:10.5px; flex:1}
+  .reparto i.euros{text-align:right; flex:none; color:var(--rosa); font-weight:700; font-size:12px}
+  .punto{width:8px; height:8px; border-radius:50%; flex:none}
+  .punto.verde{background:var(--verde)} .punto.ambar{background:var(--oro)}
+  .punto.rosa{background:var(--rosa)}   .punto.gris{background:rgba(27,27,47,.26)}
+  .tic{
+    width:15px; height:15px; border-radius:50%; flex:none; font-size:9px; font-weight:800;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--verdeSuave); color:var(--verde);
+  }
+  .tic.falta{background:var(--oroSuave); color:var(--oro)}
+
+  .ventaja{padding:17px 0; border-top:1px solid var(--linea)}
+  .ventaja:first-child{border-top:0; padding-top:0}
+  .ventaja b{display:block; font-family:var(--titular); font-size:19px}
+  .ventaja p{margin-top:6px; font-size:14.5px; color:var(--gris); text-wrap:pretty}
+
   .herramientas{display:flex; gap:6px}
   .herramienta{flex:1; text-align:center; padding:7px; border-radius:11px; background:var(--tarjeta); border:1px solid var(--linea); font-size:11px; font-weight:600; color:var(--gris)}
 
@@ -180,16 +225,6 @@
   .peldano.verde h3{color:var(--verde)} .peldano.rosa h3{color:var(--rosa)} .peldano.oro h3{color:var(--oro)}
   .peldano p{margin-top:7px; font-size:14.5px; color:var(--gris); text-wrap:pretty}
 
-  /* Los marcos que se desbloquean. */
-  .marcos{display:flex; flex-wrap:wrap; gap:22px; margin-top:28px}
-  .marco{text-align:center; width:84px}
-  .anillo{
-    width:62px; height:62px; border-radius:50%; margin:0 auto;
-    display:flex; align-items:center; justify-content:center;
-    font-weight:800; font-family:var(--titular); font-size:17px; color:#fff;
-  }
-  .marco b{display:block; margin-top:9px; font-size:12.5px}
-  .marco small{display:block; font-size:11px; color:var(--flojo)}
 
   /* Las señales de confianza: etiquetas de verdad. */
   .senales{display:flex; flex-wrap:wrap; gap:9px; margin-top:26px}
@@ -218,10 +253,13 @@
   .pie{margin-top:36px; padding:22px 0 calc(34px + env(safe-area-inset-bottom)); border-top:1px solid var(--linea);
        display:flex; flex-wrap:wrap; gap:8px 20px; font-size:13.5px; color:var(--flojo)}
 
+  /* Las etiquetas piden sitio a los lados del móvil. Por debajo de este ancho
+     no lo hay, y más vale no enseñarlas que enseñarlas cortadas. */
+  @media (max-width:1120px){ .flotante{display:none} }
+
   @media (max-width:900px){
     .portada{grid-template-columns:1fr; gap:38px; padding-top:34px}
     .escena{margin-top:4px}
-    .flotante{display:none}
     .duo{grid-template-columns:1fr; gap:30px}
     .escalera{grid-template-columns:1fr}
     .promesas{grid-template-columns:1fr}
@@ -242,11 +280,27 @@
         cuadrilla y otra cuadrilla, no. En Planazo <b>la cara pública es el
         grupo</b>: lo que hacéis juntos, los planes que montáis y cómo os salen.</p>
 
-        <div class="botones">
-          <a class="boton" id="descargar" href="https://expo.dev/artifacts/eas/HM_Xlm-XSVkQfk4sPUIdjE2BiPtgXcJgxZvYr3JRh6U.apk">Descargar para Android</a>
-          <a class="boton fantasma" href="#planes">Ver cómo es por dentro</a>
+        <!-- Los dos botones de tienda, ya colocados. Cuando existan los
+             enlaces, se cambia el `href` y el `data-pronto` y ya está: el
+             sitio que ocupan, el tamaño y la alineación no se mueven, que es
+             lo que suele romperse al cambiar esto a última hora.
+
+             Hoy llevan a «avisadme» y no a una tienda que no existe. Un botón
+             que promete una descarga y no descarga nada gasta la única visita
+             que te da alguien. -->
+        <div class="tiendas">
+          <a class="tienda" id="iphone" data-pronto="Muy pronto"
+             href="mailto:hola@planazo.lol?subject=Avisadme%20cuando%20est%C3%A9%20en%20iPhone">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.4 12.8c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9-.7 0-1.9-.9-3.1-.8-1.6 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.4 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3 .7c1.3 0 2.1-1.1 2.8-2.3.9-1.3 1.3-2.6 1.3-2.7 0 0-2.4-.9-2.4-3.7zM14.2 5.9c.6-.8 1-1.9.9-3-.9 0-2 .6-2.7 1.4-.6.7-1.1 1.8-.9 2.9 1 .1 2-.5 2.7-1.3z"/></svg>
+            <span><small>Descárgala en el</small>App Store</span>
+          </a>
+          <a class="tienda" id="android" data-pronto="Versión de pruebas"
+             href="https://expo.dev/artifacts/eas/HM_Xlm-XSVkQfk4sPUIdjE2BiPtgXcJgxZvYr3JRh6U.apk">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3.6 2.3c-.3.3-.4.7-.4 1.2v17c0 .5.1.9.4 1.2l9-9.7-9-9.7zm11 7.1L5.9 1.3l10.8 6.2-2.1 1.9zM5.9 22.7l8.7-8.1 2.1 1.9-10.8 6.2zm12.9-7.9-2.4-2.2 2.4-2.2 2.6 1.5c.6.4.6 1.1 0 1.5l-2.6 1.4z"/></svg>
+            <span><small>Consíguelo en</small>Google Play</span>
+          </a>
         </div>
-        <p class="nota" id="nota">Versión de pruebas, 0.2.0 · Android 7 o más nuevo</p>
+        <p class="nota" id="nota">Android ya se puede probar · en iPhone, muy pronto</p>
       </div>
 
       <div class="escena">
@@ -332,6 +386,82 @@
     <div class="cinta"><div id="cinta"></div></div>
   </div>
 
+  <!-- ══ El plan por dentro ════════════════════════════════════════════════
+       Lo que de verdad convence, y lo que no existe en ningún otro sitio:
+       una quedada entera en una pantalla. Los números del reparto son los que
+       saldrían de verdad —se han calculado con el mismo algoritmo que usa la
+       app, el de las transferencias mínimas— porque unos números inventados
+       que no suman los pilla cualquiera que mire dos veces. -->
+  <div class="seccion">
+    <div class="rotulo">El plan, entero</div>
+    <h2>Todo lo de una quedada, en una pantalla.</h2>
+    <p class="intro">Quién va y quién no. Quién lleva la nevera. Quién puso el
+    dinero y quién debe a quién. Hoy eso vive en cuatro sitios a la vez: el
+    grupo de WhatsApp, una nota del móvil, un Excel que abrió alguien y la
+    memoria de quien se acuerde.</p>
+
+    <div class="duo">
+      <div class="escena">
+        <div class="movil claro">
+          <div class="barra"><span>9:41</span><span>El plan</span></div>
+          <div class="pantalla">
+            <div class="cabeceraApp" style="align-items:flex-start">
+              <div style="flex:1">
+                <div class="tituloApp">Acampada en Tamadaba</div>
+                <div class="subApp">Sábado · 18:00 · Artenara</div>
+              </div>
+              <span class="etiqueta verde">Vas</span>
+            </div>
+
+            <div class="tarjeta" style="gap:7px">
+              <div class="rotuloApp">QUIÉN VA · 7 DE 10 PLAZAS</div>
+              <div class="reparto"><span class="punto verde"></span><b>7 van</b><i>Marta, Nauzet, Chedey…</i></div>
+              <div class="reparto"><span class="punto ambar"></span><b>2 en duda</b><i>Yeray, Bego</i></div>
+              <div class="reparto"><span class="punto gris"></span><b>1 no va</b><i>Moni</i></div>
+            </div>
+
+            <div class="tarjeta" style="gap:7px">
+              <div class="rotuloApp">QUÉ LLEVA CADA UNO</div>
+              <div class="reparto"><span class="tic">✓</span><b>Nevera</b><i>la lleva Marta</i></div>
+              <div class="reparto"><span class="tic">✓</span><b>Carbón y hielo</b><i>lo lleva Nauzet</i></div>
+              <div class="reparto"><span class="tic falta">!</span><b>Sillas · faltan 2</b><i>sin dueño</i></div>
+            </div>
+
+            <div class="tarjeta" style="gap:7px">
+              <div class="rotuloApp">LIQUIDACIÓN · 2 TRANSFERENCIAS</div>
+              <div class="reparto"><span class="punto rosa"></span><b>Chedey paga a Marta</b><i class="euros">18,40 €</i></div>
+              <div class="reparto"><span class="punto rosa"></span><b>Yeray paga a Nauzet</b><i class="euros">11,25 €</i></div>
+              <div class="subApp" style="margin-top:3px">De 4 gastos y 97,30 € en total.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="ventaja">
+          <b>Las cuentas se cuadran solas</b>
+          <p>Cada uno apunta lo que pagó y entre quiénes se reparte. La app
+          calcula el <b>mínimo de transferencias</b> que dejan a todo el mundo
+          a cero: cuatro gastos entre siete personas no son veintiún pagos,
+          son dos. Y con la foto del ticket, para el «¿y estos 87 € de qué
+          eran?» de tres semanas después.</p>
+        </div>
+        <div class="ventaja">
+          <b>Se sabe quién va de verdad</b>
+          <p>Nada de contar corazones en un grupo. Tres respuestas —voy, en
+          duda, no voy— y una fecha tope: quien no conteste pasa a «no voy»
+          solo, con aviso. Así las plazas son plazas.</p>
+        </div>
+        <div class="ventaja">
+          <b>Y quién lleva qué</b>
+          <p>La lista de cosas con dueño y cantidades. Lo que sigue sin dueño
+          se ve en ámbar, que es lo que evita llegar con tres neveras y
+          ninguna silla.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ══ Los niveles ════════════════════════════════════════════════════ -->
   <div class="seccion">
     <div class="rotulo">Lo que se te nota</div>
@@ -360,19 +490,6 @@
         <h3>Reportero</h3>
         <p>Sube con lo que cuentas de ellos: la nota que pones, lo que escribes
         y las fotos que traes de vuelta.</p>
-      </div>
-    </div>
-
-    <div style="margin-top:42px">
-      <div class="rotulo">Y un marco para tu foto</div>
-      <p class="intro" style="margin-top:4px">Cada nivel abre un color nuevo. Son
-      cinco, y se ven alrededor de tu avatar en toda la app.</p>
-      <div class="marcos">
-        <div class="marco"><div class="anillo" style="background:linear-gradient(140deg,#2DD4BF,#0FA9A0)">AD</div><b>Turquesa</b><small>Nivel 1</small></div>
-        <div class="marco"><div class="anillo" style="background:linear-gradient(140deg,#F794C0,#A3185C)">JC</div><b>Rosa</b><small>Nivel 2</small></div>
-        <div class="marco"><div class="anillo" style="background:linear-gradient(140deg,#A78BFA,#6D28D9)">NR</div><b>Lila</b><small>Nivel 3</small></div>
-        <div class="marco"><div class="anillo" style="background:linear-gradient(140deg,#60A5FA,#1D4ED8)">MG</div><b>Mar</b><small>Nivel 4</small></div>
-        <div class="marco"><div class="anillo" style="background:linear-gradient(140deg,#FB7185,#9F1239)">CH</div><b>Volcán</b><small>Nivel 5</small></div>
       </div>
     </div>
   </div>
@@ -466,21 +583,21 @@
         <p>Nunca, y menos de forma automática.</p>
       </div>
     </div>
-
-    <div class="aviso">
-      <b>Todavía no está en Google Play.</b> Esto es una versión de pruebas que
-      se instala desde el archivo: Android te avisará de que viene de fuera de la
-      tienda. En iPhone aún no hay nada que instalar.
-    </div>
   </div>
 
   <div class="cierre">
     <h2>Lo difícil no es quedar. Es cuadrar.</h2>
     <p>Quién va, dónde, a qué hora, quién lleva el hielo y cuánto puso cada uno.
     Todo en el mismo sitio, y sin que nadie se entere tarde.</p>
-    <div class="botones">
-      <a class="boton" id="descargar2" href="https://expo.dev/artifacts/eas/HM_Xlm-XSVkQfk4sPUIdjE2BiPtgXcJgxZvYr3JRh6U.apk">Descargar para Android</a>
-      <a class="boton fantasma" href="mailto:hola@planazo.lol?subject=Me%20interesa%20Planazo">Escribirnos</a>
+    <div class="tiendas" style="justify-content:center">
+      <a class="tienda oscura" href="mailto:hola@planazo.lol?subject=Avisadme%20cuando%20est%C3%A9%20en%20iPhone">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.4 12.8c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9-.7 0-1.9-.9-3.1-.8-1.6 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.4 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3 .7c1.3 0 2.1-1.1 2.8-2.3.9-1.3 1.3-2.6 1.3-2.7 0 0-2.4-.9-2.4-3.7zM14.2 5.9c.6-.8 1-1.9.9-3-.9 0-2 .6-2.7 1.4-.6.7-1.1 1.8-.9 2.9 1 .1 2-.5 2.7-1.3z"/></svg>
+        <span><small>Descárgala en el</small>App Store</span>
+      </a>
+      <a class="tienda oscura" href="https://expo.dev/artifacts/eas/HM_Xlm-XSVkQfk4sPUIdjE2BiPtgXcJgxZvYr3JRh6U.apk">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3.6 2.3c-.3.3-.4.7-.4 1.2v17c0 .5.1.9.4 1.2l9-9.7-9-9.7zm11 7.1L5.9 1.3l10.8 6.2-2.1 1.9zM5.9 22.7l8.7-8.1 2.1 1.9-10.8 6.2zm12.9-7.9-2.4-2.2 2.4-2.2 2.6 1.5c.6.4.6 1.1 0 1.5l-2.6 1.4z"/></svg>
+        <span><small>Consíguelo en</small>Google Play</span>
+      </a>
     </div>
   </div>
 
@@ -538,18 +655,21 @@ const ficha = (p, i) => {
 document.getElementById('cinta').innerHTML =
   PLANES.map(ficha).join('') + PLANES.map(ficha).join('');
 
-// ── En iPhone no hay nada que descargar ──────────────────────────────────
-// Ofrecer un APK a un iPhone es ofrecer un fichero que no se puede abrir.
-// Mejor decirlo que dejar que lo descubra al tocar.
-if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
-  for (const id of ['descargar', 'descargar2']) {
-    const b = document.getElementById(id);
-    if (!b) continue;
-    b.textContent = 'Avisadme cuando esté en iPhone';
-    b.href = 'mailto:hola@planazo.lol?subject=Avisadme%20cuando%20est%C3%A9%20en%20iPhone';
-  }
-  document.getElementById('nota').textContent = 'De momento solo hay versión de Android.';
+// ── En iPhone todavía no hay nada que instalar ───────────────────────────
+// Ofrecer un APK a un iPhone es ofrecer un fichero que no se puede abrir. Y al
+// revés: a quien entra desde un Android, lo de «muy pronto» del botón de Apple
+// no le dice nada. Cada uno ve primero el suyo.
+const esIPhone = /iPhone|iPad|iPod/.test(navigator.userAgent);
+if (esIPhone) {
+  const fila = document.querySelector('.tiendas');
+  const apple = document.getElementById('iphone');
+  if (fila && apple) fila.prepend(apple);
+  const android = document.getElementById('android');
+  if (android) android.setAttribute('data-pronto', 'Solo Android');
+  const n = document.getElementById('nota');
+  if (n) n.textContent = 'En iPhone, muy pronto. Avísanos y te escribimos el día que esté.';
 }
+
 </script>
 </body>
 </html>
